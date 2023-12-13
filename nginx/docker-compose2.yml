@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+  project:
+    container_name: custom_project_container  # Custom name for the project service container
+    volumes:
+      - static:/static
+    env_file:
+      - .env
+    build: 
+      context: ./project
+    ports:
+      - "8000:8000"
+
+  frontend:
+    container_name: custom_frontend_container  # Custom name for the frontend service container
+    build: 
+      context: ./frontend
+    volumes:
+      - frontend:/app/build 
+
+  nginx:
+    container_name: custom_nginx_container  # Custom name for the nginx service container
+    build: 
+      context: ./nginx
+    volumes:
+      - static:/static
+      - frontend:/var/www/frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - project
+      - frontend
+
+volumes:
+  static:
+  frontend:
